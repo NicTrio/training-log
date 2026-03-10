@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Training">
+<meta name="theme-color" content="#F2F0EB">
+<title>Training Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #F2F0EB;
+  --bg2:     #E8E6E0;
+  --surface: #FFFFFF;
+  --border:  #D8D5CE;
+  --border2: #B8B5AE;
+  --text:    #1A1916;
+  --muted:   #7A7770;
+  --dim:     #AEABA4;
+  --cal:     #E8500A; --cal-bg:   #FEF0EA;
+  --nuoto:   #0076A8; --nuoto-bg: #E6F4FA;
+  --mob:     #2B7A4B; --mob-bg:   #E8F5EE;
+  --run:     #C41E1E; --run-bg:   #FCEAEA;
+  --r: 12px; --rs: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* INSTALL BAR */
+#install-bar{display:none;background:var(--text);color:white;padding:10px 16px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;align-items:center;justify-content:center;gap:8px}
+#install-bar.show{display:flex}
+
+/* HEADER */
+header{background:var(--bg);padding:20px 20px 0;max-width:600px;margin:0 auto}
+.header-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.app-title{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.06em;color:var(--text);line-height:1}
+.session-count{font-size:12px;color:var(--muted);font-weight:500}
+.header-sub{font-size:12px;color:var(--dim);margin-bottom:20px}
+
+/* LAYOUT */
+.page{max-width:600px;margin:0 auto;padding:0 16px 100px}
+
+/* SECTION TITLE */
+.st{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.14em;color:var(--dim);margin-bottom:10px;margin-top:24px}
+
+/* SPORT PILLS */
+.sport-pills{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.sport-pill{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .18s ease;text-align:left;-webkit-tap-highlight-color:transparent}
+.sport-pill:hover{border-color:var(--border2);background:var(--bg)}
+.sport-pill.active.sp-cal{border-color:var(--cal);background:var(--cal-bg)}
+.sport-pill.active.sp-nuoto{border-color:var(--nuoto);background:var(--nuoto-bg)}
+.sport-pill.active.sp-mob{border-color:var(--mob);background:var(--mob-bg)}
+.sport-pill.active.sp-run{border-color:var(--run);background:var(--run-bg)}
+.pill-icon{font-size:20px;flex-shrink:0}
+.pill-name{font-size:13px;font-weight:600;color:var(--muted);display:block;line-height:1.2}
+.pill-sub{font-size:11px;color:var(--dim)}
+.sport-pill.active .pill-name{color:var(--text)}
+.sport-pill.active.sp-cal .pill-name{color:var(--cal)}
+.sport-pill.active.sp-nuoto .pill-name{color:var(--nuoto)}
+.sport-pill.active.sp-mob .pill-name{color:var(--mob)}
+.sport-pill.active.sp-run .pill-name{color:var(--run)}
+
+/* FORM AREA */
+#form-area{animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+
+/* FIELDS */
+.fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+input[type=text],input[type=date],input[type=number],textarea,select{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 11px;width:100%;outline:none;transition:border-color .15s,background .15s;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--border2);background:var(--surface)}
+input[type=date]{color-scheme:light}
+textarea{resize:vertical;min-height:64px;line-height:1.5}
+select option{background:white}
+::placeholder{color:var(--dim)}
+.row{display:flex;gap:8px;margin-bottom:10px}
+.row:last-child{margin-bottom:0}
+.w-sm{max-width:70px;flex:0 0 70px}
+.w-md{max-width:100px;flex:0 0 100px}
+.w-lg{max-width:140px;flex:0 0 140px}
+
+/* EXERCISE ITEMS */
+.ex-item{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:8px;animation:fadeUp .18s ease}
+.ex-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ex-num{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dim);width:22px;flex-shrink:0;line-height:1}
+.btn-rm{background:none;border:none;color:var(--dim);cursor:pointer;padding:4px 6px;border-radius:6px;font-size:18px;line-height:1;transition:all .15s;flex-shrink:0}
+.btn-rm:hover{color:var(--run);background:var(--run-bg)}
+.ex-grid{display:grid;grid-template-columns:60px 72px 1fr;gap:6px;padding-left:30px}
+@media(max-width:400px){.ex-grid{grid-template-columns:60px 72px}.ex-wcol{grid-column:1/-1}}
+.ex-notes-row{padding-left:30px;margin-top:6px}
+
+/* STYLE ROWS */
+.sty-row{display:grid;grid-template-columns:1fr 80px 34px;gap:6px;align-items:flex-end;margin-bottom:8px;animation:fadeUp .18s ease}
+.btn-rm-sm{background:none;border:1.5px solid var(--border);border-radius:var(--rs);color:var(--dim);cursor:pointer;height:38px;font-size:16px;transition:all .15s;width:34px}
+.btn-rm-sm:hover{border-color:var(--run);color:var(--run)}
+
+/* ADD BUTTONS */
+.btn-add{width:100%;padding:10px;background:none;border:1.5px dashed var(--border);border-radius:var(--rs);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:4px}
+.btn-add.for-cal:hover{border-color:var(--cal);color:var(--cal);background:var(--cal-bg)}
+.btn-add.for-nuoto:hover{border-color:var(--nuoto);color:var(--nuoto);background:var(--nuoto-bg)}
+.btn-add.for-pir:hover{border-color:var(--cal);color:var(--cal);background:var(--cal-bg)}
+
+/* PIRAMIDALE BLOCK */
+.pir-item{background:var(--cal-bg);border:1.5px solid var(--cal);border-radius:var(--rs);padding:12px;margin-bottom:8px;animation:fadeUp .18s ease}
+.pir-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pir-badge{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.12em;background:var(--cal);color:white;padding:3px 8px;border-radius:4px;flex-shrink:0}
+.pir-seq{font-size:11px;color:var(--cal);font-weight:600;flex:1}
+.pir-fields{display:flex;flex-direction:column;gap:6px}
+.pir-ex-row{display:flex;align-items:center;gap:8px}
+.pir-ex-num{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--cal);width:16px;flex-shrink:0}
+
+/* DISPLAY — PIRAMIDALE in storico */
+.d-pir-block{background:var(--cal-bg);border:1.5px solid var(--cal);border-radius:var(--rs);padding:10px 12px;margin-top:6px}
+.d-pir-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.d-pir-badge{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.1em;background:var(--cal);color:white;padding:2px 7px;border-radius:4px}
+.d-pir-seq{font-size:11px;color:var(--cal);font-weight:600}
+.d-pir-ex{font-size:13px;color:var(--text);padding:3px 0;border-bottom:1px solid rgba(232,80,10,.15);display:flex;gap:8px;align-items:center}
+.d-pir-ex:last-child{border-bottom:none;padding-bottom:0}
+.d-pir-n{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--cal);width:16px}
+
+/* SAVE */
+.btn-save{width:100%;padding:15px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.16em;border:none;border-radius:var(--r);cursor:pointer;transition:all .2s ease;margin-top:6px;display:flex;align-items:center;justify-content:center}
+.btn-save:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 4px 16px rgba(0,0,0,.13)}
+.btn-save:active{transform:translateY(0)}
+.btn-save:disabled{opacity:.3;cursor:not-allowed;transform:none;filter:none;box-shadow:none}
+.btn-save.for-cal{background:var(--cal);color:#fff}
+.btn-save.for-nuoto{background:var(--nuoto);color:#fff}
+.btn-save.for-mob{background:var(--mob);color:#fff}
+.btn-save.for-run{background:var(--run);color:#fff}
+
+/* DIVIDER */
+.divider{border:none;border-top:1.5px solid var(--border);margin:28px 0 0}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;margin-top:16px}
+.f-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s}
+.f-btn:hover{border-color:var(--border2)}
+.f-btn.on{border-color:var(--text);background:var(--text);color:white}
+.f-btn.on.f-cal{border-color:var(--cal);background:var(--cal);color:#fff}
+.f-btn.on.f-nuoto{border-color:var(--nuoto);background:var(--nuoto);color:#fff}
+.f-btn.on.f-mob{border-color:var(--mob);background:var(--mob);color:#fff}
+.f-btn.on.f-run{border-color:var(--run);background:var(--run);color:#fff}
+
+/* HISTORY CARDS */
+#history-list{display:flex;flex-direction:column;gap:8px;padding-bottom:16px}
+.h-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .15s;animation:fadeUp .2s ease}
+.h-card:hover{border-color:var(--border2)}
+.acc-bar{height:3px}
+.t-cal .acc-bar{background:var(--cal)}.t-nuoto .acc-bar{background:var(--nuoto)}.t-mob .acc-bar{background:var(--mob)}.t-run .acc-bar{background:var(--run)}
+.h-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.h-sport-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:100px;flex-shrink:0}
+.t-cal .h-sport-tag{background:var(--cal-bg);color:var(--cal)}
+.t-nuoto .h-sport-tag{background:var(--nuoto-bg);color:var(--nuoto)}
+.t-mob .h-sport-tag{background:var(--mob-bg);color:var(--mob)}
+.t-run .h-sport-tag{background:var(--run-bg);color:var(--run)}
+.h-date{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.h-summary{font-size:12px;color:var(--muted);flex-shrink:0}
+.h-chev{font-size:10px;color:var(--dim);transition:transform .22s ease;flex-shrink:0;margin-left:4px}
+.h-chev.open{transform:rotate(180deg)}
+.h-body{max-height:0;overflow:hidden;transition:max-height .3s ease;border-top:0px solid var(--border)}
+.h-body.open{max-height:1400px;border-top-width:1.5px}
+.h-inner{padding:14px}
+
+/* DISPLAY — CALISTHENICS */
+.d-ex{display:flex;flex-direction:column}
+.d-ex-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.d-ex-row:last-child{border-bottom:none;padding-bottom:0}
+.d-n{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--dim);width:18px;flex-shrink:0;padding-top:1px}
+.d-info{flex:1;min-width:0}
+.d-name{font-size:14px;font-weight:500;margin-bottom:1px}
+.d-note{font-size:11px;color:var(--muted);font-style:italic}
+.d-tags{display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+.tag-v{background:var(--bg2);color:var(--muted)}
+.tag-cal{background:var(--cal-bg);color:var(--cal)}
+
+/* DISPLAY — NUOTO */
+.d-stats{display:flex;gap:8px;margin-bottom:12px}
+.d-stat{flex:1;background:var(--bg);border-radius:var(--rs);padding:10px 12px;border:1px solid var(--border)}
+.d-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;color:var(--nuoto)}
+.d-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-weight:600}
+.d-styles{display:flex;flex-direction:column;gap:6px}
+.d-srow{display:flex;align-items:center;font-size:13px}
+.d-sname{flex:1;color:var(--muted)}
+.d-slaps{font-weight:600;color:var(--nuoto)}
+
+/* DISPLAY — RUN */
+.d-run-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.d-stat.run .d-stat-val{color:var(--run)}
+
+/* DISPLAY — MOB / INFO */
+.d-info{display:flex;flex-direction:column;gap:8px}
+.d-row{display:flex;gap:8px;font-size:13px;align-items:baseline}
+.d-key{color:var(--dim);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;width:72px;flex-shrink:0}
+.d-val{color:var(--text)}
+
+/* DELETE CONFIRM */
+.h-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-top:12px;margin-top:12px;border-top:1px solid var(--border)}
+.btn-del{font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--rs);border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.btn-del:hover{border-color:var(--run);color:var(--run);background:var(--run-bg)}
+.del-confirm{display:none;align-items:center;gap:8px}
+.del-confirm.show{display:flex;animation:fadeUp .15s ease}
+.del-q{font-size:12px;color:var(--run);font-weight:500}
+.btn-del-y{font-size:12px;font-weight:600;padding:6px 14px;border-radius:var(--rs);border:none;background:var(--run);color:#fff;cursor:pointer}
+.btn-del-y:hover{filter:brightness(1.1)}
+.btn-del-n{font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--rs);border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:13px;line-height:1.8;border:1.5px dashed var(--border);border-radius:var(--r)}
+.empty-icon{font-size:32px;margin-bottom:8px;display:block}
+
+/* EDIT MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;animation:slideUp .25s cubic-bezier(.32,1,.46,1)}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:1.5px solid var(--border)}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;color:var(--text)}
+.modal-sport-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:100px}
+.btn-modal-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 6px;line-height:1;border-radius:6px}
+.btn-modal-close:hover{background:var(--bg2)}
+.modal-body{padding:16px 20px 24px}
+.btn-modal-save{width:100%;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.16em;border:none;border-radius:var(--r);cursor:pointer;margin-top:8px;transition:all .18s}
+.btn-modal-save:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-modal-save.for-cal{background:var(--cal);color:#fff}
+.btn-modal-save.for-nuoto{background:var(--nuoto);color:#fff}
+.btn-modal-save.for-mob{background:var(--mob);color:#fff}
+.btn-modal-save.for-run{background:var(--run);color:#fff}
+.btn-edit{font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--rs);border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.btn-edit:hover{border-color:var(--nuoto);color:var(--nuoto);background:var(--nuoto-bg)}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--text);color:white;border-radius:100px;padding:10px 20px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s cubic-bezier(.34,1.4,.64,1);z-index:999;white-space:nowrap;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="install-bar" onclick="installPWA()">
+  <span>📲</span> Aggiungi alla schermata home
+  <span style="margin-left:auto;opacity:.6;font-size:12px" onclick="event.stopPropagation();this.parentElement.style.display='none'">✕</span>
+</div>
+
+<header>
+  <div class="header-top">
+    <span class="app-title">Training Log</span>
+    <span class="session-count" id="scnt">— sessioni</span>
+  </div>
+  <p class="header-sub">Il tuo diario di allenamento</p>
+</header>
+
+<div class="page">
+
+  <div class="st">Nuovo allenamento</div>
+  <div class="sport-pills">
+    <button class="sport-pill sp-cal"   onclick="selectSport('cal')">
+      <span class="pill-icon">🏋️</span>
+      <span><span class="pill-name">Calisthenics</span><span class="pill-sub">Esercizi · Ripetizioni</span></span>
+    </button>
+    <button class="sport-pill sp-nuoto" onclick="selectSport('nuoto')">
+      <span class="pill-icon">🏊</span>
+      <span><span class="pill-name">Nuoto</span><span class="pill-sub">Vasche · Stili</span></span>
+    </button>
+    <button class="sport-pill sp-mob"   onclick="selectSport('mob')">
+      <span class="pill-icon">🤸</span>
+      <span><span class="pill-name">Mobilità</span><span class="pill-sub">Flessibilità · Corpo</span></span>
+    </button>
+    <button class="sport-pill sp-run"   onclick="selectSport('run')">
+      <span class="pill-icon">🏃</span>
+      <span><span class="pill-name">Corsa</span><span class="pill-sub">Km · Passo · Percorso</span></span>
+    </button>
+  </div>
+
+  <div id="form-area" style="display:none">
+    <div class="st" style="margin-top:16px">Data</div>
+    <div class="card" style="padding:12px 16px">
+      <input type="date" id="f-date" style="margin-bottom:0">
+    </div>
+
+    <!-- CALISTHENICS -->
+    <div id="fc-cal" class="fc" style="display:none">
+      <div class="st" style="margin-top:16px">Esercizi</div>
+      <div id="ex-list"></div>
+      <button class="btn-add for-cal" onclick="addEx()">＋  Aggiungi esercizio</button>
+      <div class="st" style="margin-top:16px">Potenziamento finale</div>
+      <div id="pir-list"></div>
+      <button class="btn-add for-pir" onclick="addPir()">＋  Aggiungi piramidale</button>
+    </div>
+
+    <!-- NUOTO -->
+    <div id="fc-nuoto" class="fc" style="display:none">
+      <div class="st" style="margin-top:16px">Sessione</div>
+      <div class="card">
+        <div class="row">
+          <div class="fg w-lg"><label class="lbl">Durata</label><input type="text" id="n-dur" placeholder="es. 1 ora"></div>
+          <div class="fg w-md"><label class="lbl">Tot. vasche</label><input type="number" id="n-tot" placeholder="40" min="0"></div>
+        </div>
+        <div class="lbl" style="margin-bottom:8px">Stili</div>
+        <div id="sty-list"></div>
+        <button class="btn-add for-nuoto" onclick="addSty()">＋  Aggiungi stile</button>
+      </div>
+    </div>
+
+    <!-- MOBILITA -->
+    <div id="fc-mob" class="fc" style="display:none">
+      <div class="st" style="margin-top:16px">Sessione</div>
+      <div class="card">
+        <div class="row">
+          <div class="fg w-lg"><label class="lbl">Durata</label><input type="text" id="m-dur" placeholder="es. 1 ora"></div>
+          <div class="fg"><label class="lbl">Luogo (opz.)</label><input type="text" id="m-loc" placeholder="es. palestra..."></div>
+        </div>
+        <div class="row">
+          <div class="fg"><label class="lbl">Intensità</label>
+            <select id="m-int">
+              <option value="">— scegli —</option>
+              <option value="Bassa">🟢 Bassa</option>
+              <option value="Media">🟡 Media</option>
+              <option value="Alta">🔴 Alta</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:0">
+          <div class="fg"><label class="lbl">Note</label><textarea id="m-notes" placeholder="Tipo di lavoro, focus, sensazioni..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORSA -->
+    <div id="fc-run" class="fc" style="display:none">
+      <div class="st" style="margin-top:16px">Sessione</div>
+      <div class="card">
+        <div class="row">
+          <div class="fg"><label class="lbl">Distanza (km)</label><input type="number" id="r-dist" placeholder="10.0" step="0.1" min="0"></div>
+          <div class="fg"><label class="lbl">Durata</label><input type="text" id="r-dur" placeholder="es. 48 min"></div>
+        </div>
+        <div class="row">
+          <div class="fg"><label class="lbl">Passo medio</label><input type="text" id="r-pace" placeholder="es. 4:48 min/km"></div>
+          <div class="fg"><label class="lbl">FC media (bpm)</label><input type="number" id="r-hr" placeholder="155" min="0"></div>
+        </div>
+        <div class="row">
+          <div class="fg"><label class="lbl">Percorso / Luogo</label><input type="text" id="r-route" placeholder="es. Parco, Lungolago..."></div>
+        </div>
+        <div class="row" style="margin-bottom:0">
+          <div class="fg"><label class="lbl">Sensazioni / Note</label><textarea id="r-notes" placeholder="Come ti sei sentito, meteo, terreno..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="btn-save" class="btn-save" disabled onclick="saveWorkout()">Salva allenamento</button>
+  </div>
+
+  <hr class="divider">
+  <div class="st" style="margin-top:20px">Storico</div>
+  <div class="filters">
+    <button class="f-btn on"      onclick="setFilter('all',this)">Tutti</button>
+    <button class="f-btn f-cal"   onclick="setFilter('cal',this)">🏋️ Cal</button>
+    <button class="f-btn f-nuoto" onclick="setFilter('nuoto',this)">🏊 Nuoto</button>
+    <button class="f-btn f-mob"   onclick="setFilter('mob',this)">🤸 Mob</button>
+    <button class="f-btn f-run"   onclick="setFilter('run',this)">🏃 Corsa</button>
+  </div>
+  <div id="history-list"></div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal" onclick="closeEditOnOverlay(event)">
+  <div class="modal" id="edit-modal-box">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="modal-title">Modifica</span>
+        <span class="modal-sport-tag" id="em-sport-tag"></span>
+      </div>
+      <button class="btn-modal-close" onclick="closeEdit()">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Date -->
+      <div class="st" style="margin-top:0">Data</div>
+      <div class="card" style="padding:12px 16px;margin-bottom:16px">
+        <input type="date" id="em-date">
+      </div>
+
+      <!-- CAL -->
+      <div id="em-cal" style="display:none">
+        <div class="st">Esercizi</div>
+        <div id="em-ex-list"></div>
+        <button class="btn-add for-cal" onclick="emAddEx()" style="margin-bottom:16px">＋  Aggiungi esercizio</button>
+        <div class="st">Potenziamento finale</div>
+        <div id="em-pir-list"></div>
+        <button class="btn-add for-pir" onclick="emAddPir()" style="margin-bottom:4px">＋  Aggiungi piramidale</button>
+      </div>
+
+      <!-- NUOTO -->
+      <div id="em-nuoto" style="display:none">
+        <div class="st" style="margin-top:0">Sessione</div>
+        <div class="card">
+          <div class="row">
+            <div class="fg w-lg"><label class="lbl">Durata</label><input type="text" id="em-n-dur" placeholder="es. 1 ora"></div>
+            <div class="fg w-md"><label class="lbl">Tot. vasche</label><input type="number" id="em-n-tot" placeholder="40" min="0"></div>
+          </div>
+          <div class="lbl" style="margin-bottom:8px">Stili</div>
+          <div id="em-sty-list"></div>
+          <button class="btn-add for-nuoto" onclick="emAddSty()">＋  Aggiungi stile</button>
+        </div>
+      </div>
+
+      <!-- MOB -->
+      <div id="em-mob" style="display:none">
+        <div class="st" style="margin-top:0">Sessione</div>
+        <div class="card">
+          <div class="row">
+            <div class="fg w-lg"><label class="lbl">Durata</label><input type="text" id="em-m-dur" placeholder="es. 1 ora"></div>
+            <div class="fg"><label class="lbl">Luogo (opz.)</label><input type="text" id="em-m-loc" placeholder="es. palestra..."></div>
+          </div>
+          <div class="row">
+            <div class="fg"><label class="lbl">Intensità</label>
+              <select id="em-m-int">
+                <option value="">— scegli —</option>
+                <option value="Bassa">🟢 Bassa</option>
+                <option value="Media">🟡 Media</option>
+                <option value="Alta">🔴 Alta</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-bottom:0">
+            <div class="fg"><label class="lbl">Note</label><textarea id="em-m-notes" placeholder="Tipo di lavoro, focus..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUN -->
+      <div id="em-run" style="display:none">
+        <div class="st" style="margin-top:0">Sessione</div>
+        <div class="card">
+          <div class="row">
+            <div class="fg"><label class="lbl">Distanza (km)</label><input type="number" id="em-r-dist" placeholder="10.0" step="0.1" min="0"></div>
+            <div class="fg"><label class="lbl">Durata</label><input type="text" id="em-r-dur" placeholder="es. 48 min"></div>
+          </div>
+          <div class="row">
+            <div class="fg"><label class="lbl">Passo medio</label><input type="text" id="em-r-pace" placeholder="es. 4:48 min/km"></div>
+            <div class="fg"><label class="lbl">FC media (bpm)</label><input type="number" id="em-r-hr" placeholder="155" min="0"></div>
+          </div>
+          <div class="row">
+            <div class="fg"><label class="lbl">Percorso / Luogo</label><input type="text" id="em-r-route" placeholder="es. Parco..."></div>
+          </div>
+          <div class="row" style="margin-bottom:0">
+            <div class="fg"><label class="lbl">Note</label><textarea id="em-r-notes" placeholder="Sensazioni, meteo..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-modal-save" id="em-save-btn" onclick="saveEdit()">Salva modifiche</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const KEY='tlog_v4';
+let workouts=[],sport=null,filter='all',deferredPrompt=null,exC=0,stC=0;
+
+function load(){
+  try{const d=localStorage.getItem(KEY);if(d){workouts=JSON.parse(d);return}}catch(e){}
+  workouts=seed();save();
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(workouts))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+
+function seed(){return[
+  {id:'s1',type:'cal',date:'2026-02-23',exercises:[
+    {name:'Trazioni zavorrate',sets:'4',reps:'5',weight:'15 kg',notes:'Risc. 1×8-10'},
+    {name:'Dip zavorrati con fermo',sets:'4',reps:'6-7',weight:'5 kg',notes:'Fermo 2-3 sec + discesa lenta, risc. 1×8'},
+    {name:'Ice Cream Maker',sets:'4',reps:'8',weight:'',notes:''},
+    {name:'Pike Push-up su parallele basse',sets:'3',reps:'6-7',weight:'',notes:'Rialzo 14 inch'},
+  ],piramidale:{start:'10',exercises:[{name:'Addominali parallele'},{name:'Ginocchio-gomito'}]}},
+  {id:'s2',type:'nuoto',date:'2026-02-24',duration:'1 ora',totalLaps:'40',styles:[{name:'Stile libero',laps:'20'},{name:'Dorso',laps:'20'}]},
+  {id:'s3',type:'mob',date:'2026-02-25',duration:'1 ora',location:'Da mio padre',intensity:'Alta',notes:'Lavoro di mobilità + alta intensità'},
+  {id:'s4',type:'cal',date:'2026-03-06',exercises:[
+    {name:'Trazioni lente',sets:'5',reps:'6',weight:'',notes:'Salita 3s + discesa lenta'},
+    {name:'Dip zavorrati',sets:'4',reps:'6',weight:'10 kg',notes:'Fermo 1-2s in basso'},
+    {name:'Ice Cream Maker',sets:'4',reps:'8',weight:'',notes:'Ultima serie 5 rep'},
+    {name:'Curl con bilanciere',sets:'3',reps:'8',weight:'20 kg + bilan.',notes:''},
+  ],piramidale:{start:'10',exercises:[{name:'Addominali sbarra'},{name:'Chiusure da seduto (cavigliere 2kg)'}]}}
+];}
+
+// ── SPORT SELECT
+function selectSport(s){
+  sport=s;
+  document.querySelectorAll('.sport-pill').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.sp-'+s).classList.add('active');
+  document.querySelectorAll('.fc').forEach(f=>f.style.display='none');
+  document.getElementById('fc-'+s).style.display='block';
+  const fa=document.getElementById('form-area');
+  fa.style.display='block';fa.style.animation='none';
+  requestAnimationFrame(()=>fa.style.animation='');
+  const btn=document.getElementById('btn-save');
+  btn.disabled=false;btn.className='btn-save for-'+s;
+  const d=document.getElementById('f-date');
+  if(!d.value)d.value=today();
+  if(s==='cal'&&!document.getElementById('ex-list').children.length){exC=0;addEx();}
+  if(s==='nuoto'&&!document.getElementById('sty-list').children.length){stC=0;addSty();}
+  setTimeout(()=>fa.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+function today(){return new Date().toISOString().slice(0,10)}
+
+// ── EXERCISE
+function addEx(d){
+  exC++;d=d||{};
+  const list=document.getElementById('ex-list');
+  const n=list.children.length+1;
+  const el=document.createElement('div');
+  el.className='ex-item';
+  el.innerHTML=`
+    <div class="ex-head">
+      <span class="ex-num">${n}</span>
+      <div class="fg"><input type="text" placeholder="Nome esercizio" value="${x(d.name||'')}"></div>
+      <button class="btn-rm" onclick="rmEx(this)">×</button>
+    </div>
+    <div class="ex-grid">
+      <div class="fg"><label class="lbl">Serie</label><input type="text" placeholder="4" value="${x(d.sets||'')}"></div>
+      <div class="fg"><label class="lbl">Reps</label><input type="text" placeholder="6-8" value="${x(d.reps||'')}"></div>
+      <div class="fg ex-wcol"><label class="lbl">Carico</label><input type="text" placeholder="10 kg" value="${x(d.weight||'')}"></div>
+    </div>
+    <div class="ex-notes-row">
+      <div class="fg"><label class="lbl">Note (opz.)</label><input type="text" placeholder="es. fermo 2s..." value="${x(d.notes||'')}"></div>
+    </div>`;
+  list.appendChild(el);renum();
+}
+function rmEx(btn){
+  const el=btn.closest('.ex-item');
+  el.style.cssText='transition:opacity .15s,transform .15s;opacity:0;transform:translateX(-6px)';
+  setTimeout(()=>{el.remove();renum();},150);
+}
+function renum(){
+  document.querySelectorAll('#ex-list .ex-item').forEach((el,i)=>el.querySelector('.ex-num').textContent=i+1);
+}
+
+// ── PIRAMIDALE
+function addPir(d){
+  d=d||{};
+  const list=document.getElementById('pir-list');
+  // only one piramidale block at a time
+  if(list.children.length>=1){toast('Puoi aggiungere un solo blocco piramidale');return;}
+  const start=d.start||'10';
+  const e1=d.exercises&&d.exercises[0]?d.exercises[0].name:'';
+  const e2=d.exercises&&d.exercises[1]?d.exercises[1].name:'';
+  const el=document.createElement('div');
+  el.className='pir-item';
+  el.innerHTML=`
+    <div class="pir-head">
+      <span class="pir-badge">Piramidale</span>
+      <span class="pir-seq" id="pir-seq-preview">${pirSeq(start)}</span>
+      <div class="fg" style="max-width:68px">
+        <label class="lbl">Da</label>
+        <input type="number" value="${x(start)}" min="2" max="20" style="text-align:center" oninput="updatePirSeq(this)">
+      </div>
+      <button class="btn-rm" onclick="this.closest('.pir-item').remove()" title="Rimuovi">×</button>
+    </div>
+    <div class="pir-fields">
+      <div class="pir-ex-row"><span class="pir-ex-num">1</span><div class="fg"><input type="text" placeholder="Esercizio 1 (es. Addominali sbarra)" value="${x(e1)}"></div></div>
+      <div class="pir-ex-row"><span class="pir-ex-num">2</span><div class="fg"><input type="text" placeholder="Esercizio 2 (es. Ginocchio-gomito)" value="${x(e2)}"></div></div>
+    </div>`;
+  list.appendChild(el);
+}
+
+function pirSeq(start){
+  start=parseInt(start)||10;
+  const steps=[];
+  for(let i=start;i>=2;i-=2)steps.push(i);
+  return steps.join('→');
+}
+
+function updatePirSeq(input){
+  const preview=input.closest('.pir-item').querySelector('.pir-seq');
+  if(preview)preview.textContent=pirSeq(input.value);
+}
+
+
+function addSty(d){
+  stC++;d=d||{};
+  const list=document.getElementById('sty-list');
+  const el=document.createElement('div');
+  el.className='sty-row';
+  el.innerHTML=`
+    <div class="fg"><label class="lbl">Stile</label><input type="text" placeholder="Stile libero" value="${x(d.name||'')}"></div>
+    <div class="fg"><label class="lbl">Vasche</label><input type="number" placeholder="20" min="0" value="${x(d.laps||'')}"></div>
+    <button class="btn-rm-sm" onclick="this.closest('.sty-row').remove()">×</button>`;
+  list.appendChild(el);
+}
+
+// ── SAVE
+function saveWorkout(){
+  const date=document.getElementById('f-date').value;
+  if(!date){toast('⚠ Seleziona una data');return;}
+  let w={id:uid(),type:sport,date};
+  if(sport==='cal'){
+    const items=document.querySelectorAll('#ex-list .ex-item');
+    if(!items.length){toast('⚠ Aggiungi almeno un esercizio');return;}
+    w.exercises=[...items].map(el=>{
+      const ins=el.querySelectorAll('input');
+      return{name:ins[0].value.trim(),sets:ins[1].value.trim(),reps:ins[2].value.trim(),weight:ins[3].value.trim(),notes:ins[4].value.trim()};
+    });
+    // piramidale
+    const pirEl=document.querySelector('#pir-list .pir-item');
+    if(pirEl){
+      const startVal=pirEl.querySelector('input[type=number]').value.trim();
+      const exIns=pirEl.querySelectorAll('input[type=text]');
+      w.piramidale={start:startVal||'10',exercises:[{name:exIns[0].value.trim()},{name:exIns[1].value.trim()}]};
+    }
+  }
+  if(sport==='nuoto'){
+    w.duration=document.getElementById('n-dur').value.trim();
+    w.totalLaps=document.getElementById('n-tot').value.trim();
+    w.styles=[...document.querySelectorAll('#sty-list .sty-row')].map(r=>{
+      const ins=r.querySelectorAll('input');return{name:ins[0].value.trim(),laps:ins[1].value.trim()};
+    }).filter(s=>s.name);
+  }
+  if(sport==='mob'){
+    w.duration=document.getElementById('m-dur').value.trim();
+    w.location=document.getElementById('m-loc').value.trim();
+    w.intensity=document.getElementById('m-int').value;
+    w.notes=document.getElementById('m-notes').value.trim();
+  }
+  if(sport==='run'){
+    w.distance=document.getElementById('r-dist').value.trim();
+    w.duration=document.getElementById('r-dur').value.trim();
+    w.pace=document.getElementById('r-pace').value.trim();
+    w.hr=document.getElementById('r-hr').value.trim();
+    w.route=document.getElementById('r-route').value.trim();
+    w.notes=document.getElementById('r-notes').value.trim();
+  }
+  workouts.unshift(w);
+  workouts.sort((a,b)=>b.date.localeCompare(a.date));
+  save();renderHistory();resetForm();
+  document.getElementById('history-list').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('✓ Allenamento salvato');
+}
+
+function resetForm(){
+  document.querySelectorAll('.fc input,.fc textarea').forEach(el=>el.value='');
+  document.querySelectorAll('.fc select').forEach(el=>el.selectedIndex=0);
+  document.getElementById('ex-list').innerHTML='';
+  document.getElementById('sty-list').innerHTML='';
+  document.getElementById('pir-list').innerHTML='';
+  document.getElementById('f-date').value='';
+  exC=0;stC=0;
+}
+
+// ── HISTORY
+const LABELS={cal:'Calisthenics',nuoto:'Nuoto',mob:'Mobilità',run:'Corsa'};
+const ICONS={cal:'🏋️',nuoto:'🏊',mob:'🤸',run:'🏃'};
+const DAYS=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+const MONTHS=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+
+function setFilter(f,btn){
+  filter=f;
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderHistory();
+}
+
+function renderHistory(){
+  const list=document.getElementById('history-list');
+  const all=filter==='all'?workouts:workouts.filter(w=>w.type===filter);
+  document.getElementById('scnt').textContent=workouts.length+' session'+(workouts.length===1?'e':'i');
+  if(!all.length){
+    list.innerHTML='<div class="empty"><span class="empty-icon">📋</span>Nessun allenamento da mostrare.<br>Registra la tua prima sessione!</div>';
+    return;
+  }
+  list.innerHTML=all.map(cardHTML).join('');
+}
+
+function cardHTML(w){
+  const dt=fmtDate(w.date);
+  let summary='',body='';
+  if(w.type==='cal'){
+    const pirCount=w.piramidale?1:0;
+    summary=w.exercises.length+' esercizi'+(pirCount?' + piramidale':'');
+    body='<div class="d-ex">'+w.exercises.map((e,i)=>`
+      <div class="d-ex-row">
+        <span class="d-n">${i+1}</span>
+        <div class="d-info">
+          <div class="d-name">${x(e.name)}</div>
+          ${e.notes?`<div class="d-note">${x(e.notes)}</div>`:''}
+        </div>
+        <div class="d-tags">
+          ${e.sets&&e.reps?`<span class="tag tag-v">${x(e.sets)}×${x(e.reps)}</span>`:''}
+          ${e.weight?`<span class="tag tag-cal">${x(e.weight)}</span>`:''}
+        </div>
+      </div>`).join('')+'</div>';
+    if(w.piramidale){
+      const p=w.piramidale;
+      const seq=pirSeq(p.start);
+      body+=`<div class="d-pir-block">
+        <div class="d-pir-head">
+          <span class="d-pir-badge">Piramidale</span>
+          <span class="d-pir-seq">${x(seq)}</span>
+        </div>
+        ${p.exercises.filter(e=>e.name).map((e,i)=>`
+        <div class="d-pir-ex"><span class="d-pir-n">${i+1}</span>${x(e.name)}</div>`).join('')}
+      </div>`;
+    }
+  }
+  if(w.type==='nuoto'){
+    summary=w.totalLaps?`${w.totalLaps} vasche`:w.duration||'';
+    body=`<div class="d-stats">
+      ${w.duration?`<div class="d-stat"><div class="d-stat-val">${x(w.duration)}</div><div class="d-stat-lbl">Durata</div></div>`:''}
+      ${w.totalLaps?`<div class="d-stat"><div class="d-stat-val">${x(w.totalLaps)}</div><div class="d-stat-lbl">Vasche</div></div>`:''}
+    </div>
+    ${w.styles&&w.styles.length?`<div class="d-styles">${w.styles.map(s=>`
+      <div class="d-srow"><span class="d-sname">${x(s.name)}</span><span class="d-slaps">${x(s.laps)} vasche</span></div>`).join('')}</div>`:''}`;
+  }
+  if(w.type==='mob'){
+    summary=w.duration||(w.intensity||'');
+    body=`<div class="d-info">
+      ${w.duration?`<div class="d-row"><span class="d-key">Durata</span><span class="d-val">${x(w.duration)}</span></div>`:''}
+      ${w.location?`<div class="d-row"><span class="d-key">Luogo</span><span class="d-val">${x(w.location)}</span></div>`:''}
+      ${w.intensity?`<div class="d-row"><span class="d-key">Intensità</span><span class="d-val">${x(w.intensity)}</span></div>`:''}
+      ${w.notes?`<div class="d-row"><span class="d-key">Note</span><span class="d-val" style="color:var(--muted)">${x(w.notes)}</span></div>`:''}
+    </div>`;
+  }
+  if(w.type==='run'){
+    summary=w.distance?`${w.distance} km`:w.duration||'';
+    body=`<div class="d-run-stats">
+      ${w.distance?`<div class="d-stat run"><div class="d-stat-val">${x(w.distance)}</div><div class="d-stat-lbl">km</div></div>`:''}
+      ${w.duration?`<div class="d-stat run"><div class="d-stat-val" style="font-size:20px">${x(w.duration)}</div><div class="d-stat-lbl">Durata</div></div>`:''}
+      ${w.pace?`<div class="d-stat run"><div class="d-stat-val" style="font-size:18px">${x(w.pace)}</div><div class="d-stat-lbl">Passo</div></div>`:''}
+    </div>
+    <div class="d-info">
+      ${w.hr?`<div class="d-row"><span class="d-key">FC media</span><span class="d-val">${x(w.hr)} bpm</span></div>`:''}
+      ${w.route?`<div class="d-row"><span class="d-key">Percorso</span><span class="d-val">${x(w.route)}</span></div>`:''}
+      ${w.notes?`<div class="d-row"><span class="d-key">Note</span><span class="d-val" style="color:var(--muted)">${x(w.notes)}</span></div>`:''}
+    </div>`;
+  }
+  return `
+<div class="h-card t-${w.type}" id="hc-${w.id}">
+  <div class="acc-bar"></div>
+  <div class="h-header" onclick="toggleCard('${w.id}')">
+    <span class="h-sport-tag">${ICONS[w.type]} ${LABELS[w.type]}</span>
+    <span class="h-date">${dt}</span>
+    <span class="h-summary">${summary}</span>
+    <span class="h-chev" id="hch-${w.id}">▼</span>
+  </div>
+  <div class="h-body" id="hb-${w.id}">
+    <div class="h-inner">
+      ${body}
+      <div class="h-actions">
+        <div class="del-confirm" id="dc-${w.id}">
+          <span class="del-q">Eliminare?</span>
+          <button class="btn-del-n" onclick="cancelDel('${w.id}')">No</button>
+          <button class="btn-del-y" onclick="confirmDel('${w.id}')">Sì, elimina</button>
+        </div>
+        <button class="btn-edit" onclick="openEdit('${w.id}')">✏️ Modifica</button>
+        <button class="btn-del" onclick="askDel('${w.id}')">🗑 Elimina</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function toggleCard(id){
+  const b=document.getElementById('hb-'+id),c=document.getElementById('hch-'+id);
+  const o=b.classList.toggle('open');c.classList.toggle('open',o);
+}
+function askDel(id){document.getElementById('dc-'+id).classList.add('show')}
+function cancelDel(id){document.getElementById('dc-'+id).classList.remove('show')}
+function confirmDel(id){
+  const card=document.getElementById('hc-'+id);
+  card.style.cssText='transition:opacity .2s,transform .2s;opacity:0;transform:scale(.97)';
+  setTimeout(()=>{workouts=workouts.filter(w=>w.id!==id);save();renderHistory();toast('Allenamento eliminato');},200);
+}
+
+// ── EDIT MODAL
+let editingId = null;
+
+function openEdit(id){
+  const w = workouts.find(w=>w.id===id);
+  if(!w) return;
+  editingId = id;
+
+  // show correct sport section
+  ['cal','nuoto','mob','run'].forEach(s=>{
+    document.getElementById('em-'+s).style.display = s===w.type?'block':'none';
+  });
+
+  // sport tag
+  const tag = document.getElementById('em-sport-tag');
+  tag.textContent = ICONS[w.type]+' '+LABELS[w.type];
+  tag.className = 'modal-sport-tag';
+  tag.style.cssText = `background:var(--${w.type}-bg);color:var(--${w.type})`;
+
+  // save btn color
+  document.getElementById('em-save-btn').className = 'btn-modal-save for-'+w.type;
+
+  // date
+  document.getElementById('em-date').value = w.date;
+
+  // populate by type
+  if(w.type==='cal'){
+    const exList = document.getElementById('em-ex-list');
+    exList.innerHTML='';
+    w.exercises.forEach(e=>emAddEx(e));
+    const pirList = document.getElementById('em-pir-list');
+    pirList.innerHTML='';
+    if(w.piramidale) emAddPir(w.piramidale);
+  }
+  if(w.type==='nuoto'){
+    document.getElementById('em-n-dur').value = w.duration||'';
+    document.getElementById('em-n-tot').value = w.totalLaps||'';
+    const styList = document.getElementById('em-sty-list');
+    styList.innerHTML='';
+    (w.styles||[]).forEach(s=>emAddSty(s));
+  }
+  if(w.type==='mob'){
+    document.getElementById('em-m-dur').value  = w.duration||'';
+    document.getElementById('em-m-loc').value  = w.location||'';
+    document.getElementById('em-m-int').value  = w.intensity||'';
+    document.getElementById('em-m-notes').value= w.notes||'';
+  }
+  if(w.type==='run'){
+    document.getElementById('em-r-dist').value  = w.distance||'';
+    document.getElementById('em-r-dur').value   = w.duration||'';
+    document.getElementById('em-r-pace').value  = w.pace||'';
+    document.getElementById('em-r-hr').value    = w.hr||'';
+    document.getElementById('em-r-route').value = w.route||'';
+    document.getElementById('em-r-notes').value = w.notes||'';
+  }
+
+  document.getElementById('edit-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeEdit(){
+  document.getElementById('edit-modal').classList.remove('open');
+  document.body.style.overflow='';
+  editingId=null;
+}
+
+function closeEditOnOverlay(e){
+  if(e.target===document.getElementById('edit-modal')) closeEdit();
+}
+
+function saveEdit(){
+  if(!editingId) return;
+  const idx = workouts.findIndex(w=>w.id===editingId);
+  if(idx===-1) return;
+  const w = workouts[idx];
+
+  w.date = document.getElementById('em-date').value;
+
+  if(w.type==='cal'){
+    const items = document.querySelectorAll('#em-ex-list .ex-item');
+    w.exercises = [...items].map(el=>{
+      const ins=el.querySelectorAll('input');
+      return{name:ins[0].value.trim(),sets:ins[1].value.trim(),reps:ins[2].value.trim(),weight:ins[3].value.trim(),notes:ins[4].value.trim()};
+    });
+    const pirEl = document.querySelector('#em-pir-list .pir-item');
+    if(pirEl){
+      const startVal = pirEl.querySelector('input[type=number]').value.trim();
+      const exIns = pirEl.querySelectorAll('input[type=text]');
+      w.piramidale = {start:startVal||'10',exercises:[{name:exIns[0].value.trim()},{name:exIns[1].value.trim()}]};
+    } else {
+      delete w.piramidale;
+    }
+  }
+  if(w.type==='nuoto'){
+    w.duration  = document.getElementById('em-n-dur').value.trim();
+    w.totalLaps = document.getElementById('em-n-tot').value.trim();
+    w.styles = [...document.querySelectorAll('#em-sty-list .sty-row')].map(r=>{
+      const ins=r.querySelectorAll('input');return{name:ins[0].value.trim(),laps:ins[1].value.trim()};
+    }).filter(s=>s.name);
+  }
+  if(w.type==='mob'){
+    w.duration  = document.getElementById('em-m-dur').value.trim();
+    w.location  = document.getElementById('em-m-loc').value.trim();
+    w.intensity = document.getElementById('em-m-int').value;
+    w.notes     = document.getElementById('em-m-notes').value.trim();
+  }
+  if(w.type==='run'){
+    w.distance = document.getElementById('em-r-dist').value.trim();
+    w.duration = document.getElementById('em-r-dur').value.trim();
+    w.pace     = document.getElementById('em-r-pace').value.trim();
+    w.hr       = document.getElementById('em-r-hr').value.trim();
+    w.route    = document.getElementById('em-r-route').value.trim();
+    w.notes    = document.getElementById('em-r-notes').value.trim();
+  }
+
+  workouts.sort((a,b)=>b.date.localeCompare(a.date));
+  save();
+  closeEdit();
+  renderHistory();
+  // re-open the card that was edited
+  setTimeout(()=>{
+    const card=document.getElementById('hc-'+editingId||w.id);
+    if(card){card.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  },100);
+  toast('✓ Modifiche salvate');
+}
+
+// ── EDIT MODAL — form helpers (mirror of main form but using em- IDs)
+function emAddEx(d){
+  d=d||{};
+  const list=document.getElementById('em-ex-list');
+  const n=list.children.length+1;
+  const el=document.createElement('div');
+  el.className='ex-item';
+  el.innerHTML=`
+    <div class="ex-head">
+      <span class="ex-num">${n}</span>
+      <div class="fg"><input type="text" placeholder="Nome esercizio" value="${x(d.name||'')}"></div>
+      <button class="btn-rm" onclick="emRmEx(this)">×</button>
+    </div>
+    <div class="ex-grid">
+      <div class="fg"><label class="lbl">Serie</label><input type="text" placeholder="4" value="${x(d.sets||'')}"></div>
+      <div class="fg"><label class="lbl">Reps</label><input type="text" placeholder="6-8" value="${x(d.reps||'')}"></div>
+      <div class="fg ex-wcol"><label class="lbl">Carico</label><input type="text" placeholder="10 kg" value="${x(d.weight||'')}"></div>
+    </div>
+    <div class="ex-notes-row">
+      <div class="fg"><label class="lbl">Note (opz.)</label><input type="text" placeholder="es. fermo 2s..." value="${x(d.notes||'')}"></div>
+    </div>`;
+  list.appendChild(el);emRenum();
+}
+function emRmEx(btn){
+  const el=btn.closest('.ex-item');
+  el.style.cssText='transition:opacity .15s,transform .15s;opacity:0;transform:translateX(-6px)';
+  setTimeout(()=>{el.remove();emRenum();},150);
+}
+function emRenum(){
+  document.querySelectorAll('#em-ex-list .ex-item').forEach((el,i)=>el.querySelector('.ex-num').textContent=i+1);
+}
+function emAddSty(d){
+  d=d||{};
+  const list=document.getElementById('em-sty-list');
+  const el=document.createElement('div');
+  el.className='sty-row';
+  el.innerHTML=`
+    <div class="fg"><label class="lbl">Stile</label><input type="text" placeholder="Stile libero" value="${x(d.name||'')}"></div>
+    <div class="fg"><label class="lbl">Vasche</label><input type="number" placeholder="20" min="0" value="${x(d.laps||'')}"></div>
+    <button class="btn-rm-sm" onclick="this.closest('.sty-row').remove()">×</button>`;
+  list.appendChild(el);
+}
+function emAddPir(d){
+  d=d||{};
+  const list=document.getElementById('em-pir-list');
+  if(list.children.length>=1){toast('Un solo blocco piramidale');return;}
+  const start=d.start||'10';
+  const e1=d.exercises&&d.exercises[0]?d.exercises[0].name:'';
+  const e2=d.exercises&&d.exercises[1]?d.exercises[1].name:'';
+  const el=document.createElement('div');
+  el.className='pir-item';
+  el.innerHTML=`
+    <div class="pir-head">
+      <span class="pir-badge">Piramidale</span>
+      <span class="pir-seq">${pirSeq(start)}</span>
+      <div class="fg" style="max-width:68px">
+        <label class="lbl">Da</label>
+        <input type="number" value="${x(start)}" min="2" max="20" style="text-align:center" oninput="updatePirSeq(this)">
+      </div>
+      <button class="btn-rm" onclick="this.closest('.pir-item').remove()">×</button>
+    </div>
+    <div class="pir-fields">
+      <div class="pir-ex-row"><span class="pir-ex-num">1</span><div class="fg"><input type="text" placeholder="Esercizio 1" value="${x(e1)}"></div></div>
+      <div class="pir-ex-row"><span class="pir-ex-num">2</span><div class="fg"><input type="text" placeholder="Esercizio 2" value="${x(e2)}"></div></div>
+    </div>`;
+  list.appendChild(el);
+}
+
+
+function fmtDate(str){
+  const[y,m,d]=str.split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  return `${DAYS[dt.getDay()]} ${d} ${MONTHS[m-1]} ${y}`;
+}
+function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── PWA
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  document.getElementById('install-bar').classList.add('show');
+});
+function installPWA(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('install-bar').style.display='none';});
+}
+if('serviceWorker'in navigator){
+  const sw=`const C='tlog-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+  const u=URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
+  navigator.serviceWorker.register(u).catch(()=>{});
+}
+
+load();renderHistory();
+</script>
+</body>
+</html>
